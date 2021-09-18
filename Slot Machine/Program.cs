@@ -9,19 +9,38 @@ namespace Slot_Machine
         static void Main(string[] args)
         {
             List<List<int>> slotData;
+            char play ='y';
+            int coints = 50;
 
-            while (!Console.KeyAvailable)
+            Console.WriteLine("Welcome to Slot Game");
+            Console.WriteLine($"You have {coints} do you want to start play? [Y/N]");
+            var start = Console.ReadKey();
+
+            if (start.KeyChar.ToString().ToLower() == play.ToString().ToLower())
             {
-                slotData = GenerateSlotNumbers(); 
-                PrintSlotNumbers(slotData,1);
-                
-            } 
+                Console.WriteLine("Make your bid:");
+                Console.WriteLine("1 coint for center line");
+                Console.WriteLine("3 coints for all horizontal lines");
+                Console.WriteLine("6 coints for all horizontal and all vertical lines");
+                Console.WriteLine("8 coints for all horizontal lines, all vertical and diagonal lines");
+                int bid = int.Parse(Console.ReadLine());
+                coints = coints - bid;
+
+                while (!Console.KeyAvailable)
+                {
+                    slotData = GenerateSlotNumbers();
+                    PrintSlotNumbers(slotData, bid);
+
+                }
+            }
+
+            
         }
 
         /// <summary>
         /// Generating list with 0 to 2 values
         /// </summary>
-        /// <returns>new list</returns>
+        /// <returns>list with generated numbers</returns>
         static List<int> GenerateNewLineList()
         {
             Random rnd = new();
@@ -38,7 +57,7 @@ namespace Slot_Machine
         /// <summary>
         /// Generating a list contain 3 lists
         /// </summary>
-        /// <returns>list of lists</returns>
+        /// <returns>list of lists with generated numbers</returns>
         static List<List<int>> GenerateSlotNumbers()
         {
             List<List<int>> slot = new();
@@ -55,56 +74,81 @@ namespace Slot_Machine
         /// Count all vertical matches
         /// </summary>
         /// <param name="data">3 lists block</param>
-        /// <returns>one list with counted matching numbers</returns>
-        static List<int> VerticalMatches(List<List<int>> data)
+        /// <returns>
+        /// 2d int contain matching numbers counters
+        /// where the index is the matching number 
+        /// </returns>
+        static int[,] VerticalMatches(List<List<int>> data)
         {
-            List<int> matches = new();
-            int counter;
-
-            for(int i = 0; i < data.Count; i++)
+            int[,] matches = new int[,] { { 0, 0, 0 }, { 0, 0, 0 }};
+           
+            for(int i = 0; i < 3; i++)
             {
-                counter = 0;
 
-                for (int j = 0; j < data[i].Count; j++)
+                for (int j = 0; j < 2; j++)
                 {
-                    if (data[j][i]==2)
+                    if (data[j][i]==0)
                     {
-                        counter++;
+                        matches[j,i]++;
                     }
-                }
 
-                matches.Add(counter);
+                    if (data[j][i] == 1)
+                    {
+                        matches[j, i]++;
+                    }
+
+                    if (data[j][i] == 2)
+                    {
+                        matches[j, i]++;
+                    }
+                }                
             }
 
             return matches;
         }
 
         /// <summary>
-        /// Count all vertical matches
+        /// Count all diagonals matches
         /// </summary>
         /// <param name="data">3 lists block</param>
-        /// <returns>one list with counters matching numbers</returns>
-        static List<int> DiagonalMatches(List<List<int>> data)
+        /// <returns>2d int 
+        /// with counters matching numbers where index is the matching number
+        /// </returns>
+        static int[,] DiagonalMatches(List<List<int>> data)
         {
-            List<int> matches = new();
-            int leftToRighCounter=0;
-            int rightToLeftCounter=0;
+            int[,] matches = new int[,] { { 0, 0, 0 }, { 0, 0, 0 }};
 
-            for (int i = 0,j=3; i < data.Count; i++,j--)
+            for (int i = 0,j = 3; i < 3; i++,j--)
             {
-                if (data[i][i]==2)
+                if (data[i][i] == 2)
                 {
-                    leftToRighCounter++;
+                    matches[0,2] ++;
                 }
 
                 if (data[j][j] == 2)
                 {
-                    rightToLeftCounter++;
+                    matches[1, 2]++;
+                }
+                
+                if (data[i][i] == 1)
+                {
+                    matches[0, 1]++;
+                }
+
+                if (data[j][j] == 1)
+                {
+                    matches[1, 1]++;
+                }
+                if (data[i][i] == 0)
+                {
+                    matches[0, 0]++;
+                }
+
+                if (data[j][j] == 0)
+                {
+                    matches[1, 0]++;
                 }
             }
-
-            matches.Add(leftToRighCounter);
-            matches.Add(rightToLeftCounter);
 
             return matches;
         }
@@ -113,25 +157,34 @@ namespace Slot_Machine
         /// Count all horizontal matches
         /// </summary>
         /// <param name="data">3 lists block</param>
-        /// <returns>one list with counters matching numbers</returns>
-        static List<int> HorizontalMatches(List<List<int>> data)
+        /// <returns>2d int 
+        /// with counters matching numbers where index is the matching number
+        /// </returns>
+        static int[,] HorizontalMatches(List<List<int>> data)
         {
-            List<int> matches = new();
-            int counter;
+            int[,] matches = new int[,] { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
 
-            for (var i = 0; i < data.Count; i++)
+            for (var i = 0; i < 3; i++)
             {
-                counter = 0;
-
-                for (int j = 0; j < data[i].Count; j++)
+                
+                for (int j = 0; j < 3; j++)
                 {
                     if (data[i][j] == 2)
                     {
-                        counter++;
+                        matches[i, 2]++;
                     }
-                }
 
-                matches.Add(counter);
+                    if (data[i][j] == 1)
+                    {
+                        matches[i, 1]++;
+                    }
+
+                    if (data[i][j] == 0)
+                    {
+                        matches[i, 0]++;
+                    }
+
+                }
             }
 
             return matches;
@@ -141,19 +194,30 @@ namespace Slot_Machine
         /// Count center horizontal matches
         /// </summary>
         /// <param name="data">3 lists block</param>
-        /// <returns>counter matching numbers</returns>
-        static int CenterHorizontalMatches(List<List<int>> data)
+        /// <returns>2d int 
+        /// with counters matching numbers where index is the matching number
+        /// </returns>
+        static int[,] CenterHorizontalMatches(List<List<int>> data)
         {
-            int counter = 0;
+            int[,] matches = new int[,] { { 0, 0, 0 }};
 
-            for (var i = 0; i < data[1].Count; i++)
+            for (var i = 0; i < 3; i++)
             {
                 if (data[1][i] == 2)
                 {
-                    counter++;
+                    matches[0,2]++;
+                }
+                if (data[1][i] == 1)
+                {
+                    matches[0, 1]++;
+                }
+                if (data[1][i] == 0)
+                {
+                    matches[0, 0]++;
                 }
             }
-            return counter;
+
+            return matches;
         }
 
         /// <summary>
@@ -190,28 +254,103 @@ namespace Slot_Machine
             
         }
 
-        //static int CalculatePrize(List<List<int>> data, int bid)
-        //{
-        //    int prize = 0;
-        //    int temp;
+        /// <summary>
+        /// Calculate prize at one line
+        /// </summary>
+        /// <param name="arrayCounters"> aray contain match counters where each index represent mutching number</param>
+        /// <returns>int represent prize at one row</returns>
+        static int CalculatePrizeAtOneArray(int[,] arrayCounters)
+        {
+            int prize = 0;
             
-        //    switch (bid)
-        //    {
-        //        case 1:
-        //            temp = CenterHorizontalMatches(data);
+            for (int i = 0; i < 3; i++)
+            {
+                if (i==0 && i==2)
+                {
+                    if (arrayCounters[0,i] == 3)
+                        prize = 1;
+                }
+                else
+                {
+                    if (arrayCounters[0,i] == 2)
+                        prize = 2;
 
-        //            if (temp == 2)
-        //                prize = 2;
-        //            if (temp == 3)
-        //            {
+                    if (arrayCounters[0,i] == 3)
+                        prize = 3;   
+                }
+            }
 
-        //            }
-        //            break;
-        //    }
-        //}
+            return prize;
+        }
 
-  
+        static int CalculatePrize(List<List<int>> data, int bid)
+        {
+            int prize = 0;
+            int[,] temp;
 
+            switch (bid)
+            {
+                case 1:
+                    temp = CenterHorizontalMatches(data);
+
+                    prize = CalculatePrizeAtOneArray(temp);
+
+                    break;
+
+                case 3:
+                    temp = HorizontalMatches(data);
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                       prize += CalculatePrizeAtOneArray(temp);
+                    }
+                    break;
+
+                case 6:
+                    temp = HorizontalMatches(data);
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        prize += CalculatePrizeAtOneArray(temp);
+                    }
+
+                    temp = VerticalMatches(data);
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        prize += CalculatePrizeAtOneArray(temp);
+                    }
+
+                    break;
+
+                case 8:
+                    temp = HorizontalMatches(data);
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        prize += CalculatePrizeAtOneArray(temp);
+                    }
+
+                    temp = VerticalMatches(data);
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        prize += CalculatePrizeAtOneArray(temp);
+                    }
+
+                    temp = DiagonalMatches(data);
+
+                    for (int i = 0; i < 2; i++)
+                    {
+                        prize += CalculatePrizeAtOneArray(temp);
+                    }
+                    
+                    break;
+
+            }
+
+            return prize;
+        }
 
     }
 }
