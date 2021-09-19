@@ -23,13 +23,15 @@ namespace Slot_Machine
                 Console.WriteLine("3 coints for all horizontal lines");
                 Console.WriteLine("6 coints for all horizontal and all vertical lines");
                 Console.WriteLine("8 coints for all horizontal lines, all vertical and diagonal lines");
+                
                 int bid = int.Parse(Console.ReadLine());
-                coints = coints - bid;
+                GameModes playmode = (GameModes)Enum.GetValues(typeof(GameModes)).GetValue(bid);
+                coints += - bid;
 
                 while (!Console.KeyAvailable)
                 {
                     slotData = GenerateSlotNumbers();
-                    PrintSlotNumbers(slotData, bid);
+                    PrintSlotNumbers(slotData, playmode);
 
                 }
             }
@@ -224,7 +226,7 @@ namespace Slot_Machine
         /// Printing slot numbers on the screen
         /// </summary>
         /// <param name="data">generated numbers</param>
-        static void PrintSlotNumbers(List<List<int>> data,int bid)
+        static void PrintSlotNumbers(List<List<int>> data, GameModes bid)  //TODO enum?
         {
             Thread.Sleep(10);
 
@@ -232,7 +234,7 @@ namespace Slot_Machine
 
             for (int i = 0; i < data.Count; i++)
             {
-                if (i == 0 && bid >=3)
+                if (i == 0 && bid != GameModes.CenterLine)
                 {
                     //Console.WriteLine(" " + "^ ^ ^" + " ");
                     Console.WriteLine(" " + string.Join(" ", data[i]) + " ");
@@ -265,7 +267,7 @@ namespace Slot_Machine
             
             for (int i = 0; i < 3; i++)
             {
-                if (i==0 && i==2)
+                if (i==0 && i==1)
                 {
                     if (arrayCounters[0,i] == 3)
                         prize = 1;
@@ -283,21 +285,27 @@ namespace Slot_Machine
             return prize;
         }
 
-        static int CalculatePrize(List<List<int>> data, int bid)
+        /// <summary>
+        /// Calu
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="bid"></param>
+        /// <returns></returns>
+        static int CalculatePrize(List<List<int>> data, GameModes playMode)  //TODO: make this parameter an enum? =)
         {
             int prize = 0;
             int[,] temp;
 
-            switch (bid)
+            switch (playMode)
             {
-                case 1:
+                case GameModes.CenterLine:
                     temp = CenterHorizontalMatches(data);
 
                     prize = CalculatePrizeAtOneArray(temp);
 
                     break;
 
-                case 3:
+                case GameModes.Horizontal:
                     temp = HorizontalMatches(data);
 
                     for (int i = 0; i < 3; i++)
@@ -306,7 +314,7 @@ namespace Slot_Machine
                     }
                     break;
 
-                case 6:
+                case GameModes.Vertical:
                     temp = HorizontalMatches(data);
 
                     for (int i = 0; i < 3; i++)
@@ -323,7 +331,7 @@ namespace Slot_Machine
 
                     break;
 
-                case 8:
+                case GameModes.Diagonal:
                     temp = HorizontalMatches(data);
 
                     for (int i = 0; i < 3; i++)
@@ -352,5 +360,13 @@ namespace Slot_Machine
             return prize;
         }
 
+    }
+
+    enum GameModes
+    {
+        CenterLine = 1,
+        Horizontal = 3,
+        Vertical = 6,
+        Diagonal = 8
     }
 }
