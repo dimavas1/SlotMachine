@@ -20,9 +20,7 @@ namespace Slot_Machine
             var start = Console.ReadKey();
 
             while (start.KeyChar.ToString().ToLower() == play.ToString().ToLower())
-            {
-                win = 0;
-                
+            {                
                 PrintAvaliableGameModes(coints);
 
                 int bid = int.Parse(Console.ReadLine());
@@ -30,7 +28,7 @@ namespace Slot_Machine
 
                 while ((coints-bid)<=0)
                 {
-                    Console.WriteLine("You dont have enought coints to bid");
+                    Console.WriteLine("You don't have enought coints to bid");
                     Console.WriteLine("Please make new bid");
                     bid = int.Parse(Console.ReadLine());
                 }
@@ -57,13 +55,19 @@ namespace Slot_Machine
                 coints += win;
 
                 Console.WriteLine($"You Win {win}$");
-                Console.WriteLine($"You have {coints} left");                
-                Console.WriteLine($"Do you want continue play? [Y/N]");
-                Console.ReadKey();
+                
                 
                 if (coints>0)
                 {
+                    Console.WriteLine($"You have {coints} coints left");
+                    Console.WriteLine($"Do you want continue play? [Y/N]");
+                    Console.ReadKey();
                     start = Console.ReadKey();
+                }
+                else
+                {
+                    Console.WriteLine("You Lose, no more coints");
+                    break;
                 }
                
             } 
