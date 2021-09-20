@@ -22,14 +22,18 @@ namespace Slot_Machine
             while (start.KeyChar.ToString().ToLower() == play.ToString().ToLower())
             {
                 win = 0;
-                Console.WriteLine("\nMake your bid:");
-                Console.WriteLine("1 coint for center line");
-                Console.WriteLine("3 coints for all horizontal lines");
-                Console.WriteLine("6 coints for all horizontal and all vertical lines");
-                Console.WriteLine("8 coints for all horizontal lines, all vertical and diagonal lines");
+                
+                PrintAvaliableGameModes(coints);
 
                 int bid = int.Parse(Console.ReadLine());
                 counter = 0;
+
+                while ((coints-bid)<=0)
+                {
+                    Console.WriteLine("You dont have enought coints to bid");
+                    Console.WriteLine("Please make new bid");
+                    bid = int.Parse(Console.ReadLine());
+                }
 
                 for (int i = 0; i < Enum.GetNames(typeof(GameModes)).Length; i++)
                 {
@@ -47,7 +51,6 @@ namespace Slot_Machine
                 {
                     slotData = GenerateSlotNumbers();
                     PrintSlotNumbers(slotData, playmode);
-
                 }
 
                 win = CalculatePrize(slotData, playmode);
@@ -56,7 +59,13 @@ namespace Slot_Machine
                 Console.WriteLine($"You Win {win}$");
                 Console.WriteLine($"You have {coints} left");                
                 Console.WriteLine($"Do you want continue play? [Y/N]");
-                start = Console.ReadKey();
+                Console.ReadKey();
+                
+                if (coints>0)
+                {
+                    start = Console.ReadKey();
+                }
+               
             } 
                         
         }
@@ -402,6 +411,36 @@ namespace Slot_Machine
                     break;
             }
             return prize;
+        }
+
+        /// <summary>
+        /// Print avaliable modes for player
+        /// </summary>
+        /// <param name="currentCoints">coints avaliable for player</param>
+        static void PrintAvaliableGameModes(int currentCoints)
+        {
+            if (currentCoints >= 8)
+            {
+                Console.WriteLine("\nMake your bid:");
+                Console.WriteLine("1 coint for center line");
+                Console.WriteLine("3 coints for all horizontal lines");
+                Console.WriteLine("6 coints for all horizontal and all vertical lines");
+                Console.WriteLine("8 coints for all horizontal lines, all vertical and diagonal lines");
+            }
+
+            if (currentCoints < 8 && currentCoints >= 6)
+            {
+                Console.WriteLine("\nMake your bid:");
+                Console.WriteLine("1 coint for center line");
+                Console.WriteLine("3 coints for all horizontal lines");
+                Console.WriteLine("6 coints for all horizontal and all vertical lines");
+            }
+
+            if (currentCoints < 3 && currentCoints >= 1)
+            {
+                Console.WriteLine("\nMake your bid:");
+                Console.WriteLine("1 coint for center line");
+            }
         }
 
     }
