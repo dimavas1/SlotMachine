@@ -8,25 +8,40 @@ namespace Slot_Machine
     {
         static void Main(string[] args)
         {
-            List<List<int>> slotData;
+            List<List<int>> slotData = null;
             char play ='y';
             int coints = 50;
+            int counter;
+            GameModes playmode;
+            int win;
 
             Console.WriteLine("Welcome to Slot Game");
-            Console.WriteLine($"You have {coints} do you want to start play? [Y/N]");
+            Console.WriteLine($"You have {coints} do you want to start play? [Y/N]\n");
             var start = Console.ReadKey();
 
-            if (start.KeyChar.ToString().ToLower() == play.ToString().ToLower())
+            while (start.KeyChar.ToString().ToLower() == play.ToString().ToLower())
             {
-                Console.WriteLine("Make your bid:");
+                win = 0;
+                Console.WriteLine("\nMake your bid:");
                 Console.WriteLine("1 coint for center line");
                 Console.WriteLine("3 coints for all horizontal lines");
                 Console.WriteLine("6 coints for all horizontal and all vertical lines");
                 Console.WriteLine("8 coints for all horizontal lines, all vertical and diagonal lines");
-                
+
                 int bid = int.Parse(Console.ReadLine());
-                GameModes playmode = (GameModes)Enum.GetValues(typeof(GameModes)).GetValue(bid);
-                coints += - bid;
+                counter = 0;
+
+                for (int i = 0; i < Enum.GetNames(typeof(GameModes)).Length; i++)
+                {
+                    if ((int)(GameModes)Enum.GetValues(typeof(GameModes)).GetValue(i) == bid)
+                    {
+                        break;
+                    }
+                    counter++;
+                }
+
+                playmode = (GameModes)Enum.GetValues(typeof(GameModes)).GetValue(counter);
+                coints += -bid;
 
                 while (!Console.KeyAvailable)
                 {
@@ -34,9 +49,16 @@ namespace Slot_Machine
                     PrintSlotNumbers(slotData, playmode);
 
                 }
-            }
 
-            
+                win = CalculatePrize(slotData, playmode);
+                coints += win;
+
+                Console.WriteLine($"You Win {win}$");
+                Console.WriteLine($"You have {coints} left");                
+                Console.WriteLine($"Do you want continue play? [Y/N]");
+                start = Console.ReadKey();
+            } 
+                        
         }
 
         /// <summary>
@@ -59,7 +81,7 @@ namespace Slot_Machine
         /// <summary>
         /// Generating a list contain 3 lists
         /// </summary>
-        /// <returns>list of lists with generated numbers</returns>
+        /// <returns>list of lists with generated numbers 0 to 2</returns>
         static List<List<int>> GenerateSlotNumbers()
         {
             List<List<int>> slot = new();
@@ -77,31 +99,33 @@ namespace Slot_Machine
         /// </summary>
         /// <param name="data">3 lists block</param>
         /// <returns>
-        /// 2d int contain matching numbers counters
-        /// where the index is the matching number 
+        /// 3X3 block of counters 
+        /// every line of array represen a slot column and the value stored represent a counter. 
+        /// first item will count aperances of number 0, second number 1 and third number 2 on the slot column 
+        /// 3 slots columns returning 3 arrays.
         /// </returns>
         static int[,] VerticalMatches(List<List<int>> data)
         {
-            int[,] matches = new int[,] { { 0, 0, 0 }, { 0, 0, 0 }};
+            int[,] matches = new int[,] { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }};
            
             for(int i = 0; i < 3; i++)
             {
 
-                for (int j = 0; j < 2; j++)
+                for (int j = 0; j < 3; j++)
                 {
                     if (data[j][i]==0)
                     {
-                        matches[j,i]++;
+                        matches[i,0]++;
                     }
 
                     if (data[j][i] == 1)
                     {
-                        matches[j, i]++;
+                        matches[i, 1]++;
                     }
 
                     if (data[j][i] == 2)
                     {
-                        matches[j, i]++;
+                        matches[i, 2]++;
                     }
                 }                
             }
@@ -113,21 +137,24 @@ namespace Slot_Machine
         /// Count all diagonals matches
         /// </summary>
         /// <param name="data">3 lists block</param>
-        /// <returns>2d int 
-        /// with counters matching numbers where index is the matching number
+        /// <returns>
+        /// 2X3 block of counters 
+        /// every line of array represen a slots diagonal row and the value stored represent a counter. 
+        /// first item will count aperances of number 0, second number 1 and third number 2 on the slot row 
+        /// 2 slots vertical rows returning 2 arrays.
         /// </returns>
         static int[,] DiagonalMatches(List<List<int>> data)
         {
             int[,] matches = new int[,] { { 0, 0, 0 }, { 0, 0, 0 }};
 
-            for (int i = 0,j = 3; i < 3; i++,j--)
+            for (int i = 0,j = 2; i < 3; i++,j--)
             {
                 if (data[i][i] == 2)
                 {
                     matches[0,2] ++;
                 }
 
-                if (data[j][j] == 2)
+                if (data[i][j] == 2)
                 {
                     matches[1, 2]++;
                 }
@@ -137,7 +164,7 @@ namespace Slot_Machine
                     matches[0, 1]++;
                 }
 
-                if (data[j][j] == 1)
+                if (data[i][j] == 1)
                 {
                     matches[1, 1]++;
                 }
@@ -146,7 +173,7 @@ namespace Slot_Machine
                     matches[0, 0]++;
                 }
 
-                if (data[j][j] == 0)
+                if (data[i][j] == 0)
                 {
                     matches[1, 0]++;
                 }
@@ -159,8 +186,11 @@ namespace Slot_Machine
         /// Count all horizontal matches
         /// </summary>
         /// <param name="data">3 lists block</param>
-        /// <returns>2d int 
-        /// with counters matching numbers where index is the matching number
+        /// <returns>
+        /// 3X3 block of counters 
+        /// every line of array represen a slot row and the value stored represent a counter. 
+        /// first item will count aperances of number 0, second number 1 and third number 2 on the slot row 
+        /// 3 slots vertical rows  returning 3 arrays.
         /// </returns>
         static int[,] HorizontalMatches(List<List<int>> data)
         {
@@ -171,21 +201,20 @@ namespace Slot_Machine
                 
                 for (int j = 0; j < 3; j++)
                 {
-                    if (data[i][j] == 2)
-                    {
-                        matches[i, 2]++;
-                    }
-
-                    if (data[i][j] == 1)
-                    {
-                        matches[i, 1]++;
-                    }
-
                     if (data[i][j] == 0)
                     {
                         matches[i, 0]++;
                     }
-
+                    
+                    if (data[i][j] == 1)
+                    {
+                        matches[i, 1]++;
+                    }
+                    
+                    if (data[i][j] == 2)
+                    {
+                        matches[i, 2]++;
+                    }
                 }
             }
 
@@ -196,8 +225,11 @@ namespace Slot_Machine
         /// Count center horizontal matches
         /// </summary>
         /// <param name="data">3 lists block</param>
-        /// <returns>2d int 
-        /// with counters matching numbers where index is the matching number
+        /// <returns>
+        /// 1X3 block of counters 
+        /// represen a slot center row and the value stored represent a counter. 
+        /// first item will count aperances of number 0, second number 1 and third number 2 on the slot row 
+        /// center vertical rows returning 1 arrays.
         /// </returns>
         static int[,] CenterHorizontalMatches(List<List<int>> data)
         {
@@ -223,33 +255,70 @@ namespace Slot_Machine
         }
 
         /// <summary>
-        /// Printing slot numbers on the screen
+        /// Printing slot numbers and sign calculated rows and columns
         /// </summary>
-        /// <param name="data">generated numbers</param>
-        static void PrintSlotNumbers(List<List<int>> data, GameModes bid)  //TODO enum?
+        /// <param name="data">Generated slot numbers</param>
+        /// <param name="bid">game mod to sign wich rows will be calculated in prize total</param>
+        static void PrintSlotNumbers(List<List<int>> data, GameModes bid)
         {
+
             Thread.Sleep(10);
 
             Console.Clear();
 
-            for (int i = 0; i < data.Count; i++)
+            for (int i = 0; i < 3; i++)
             {
-                if (i == 0 && bid != GameModes.CenterLine)
+                if (i == 0)
                 {
-                    //Console.WriteLine(" " + "^ ^ ^" + " ");
-                    Console.WriteLine(" " + string.Join(" ", data[i]) + " ");
+                    switch (bid)
+                    {                     
+                        case GameModes.Vertical:
+                            Console.WriteLine(" " + "| | |" + " ");
+                            Console.WriteLine("-" + string.Join(" ", data[i]) + "-");
+                            break;
+                        case GameModes.Diagonal:
+                            Console.WriteLine("\\" + "| | |" + "/");
+                            Console.WriteLine("-" + string.Join(" ", data[i]) + "-");
+                            break;
+                        case GameModes.Horizontal:
+                            Console.WriteLine(" " + "     " + " ");
+                            Console.WriteLine("-" + string.Join(" ", data[i]) + "-");
+                            break;
+                        default:
+                            Console.WriteLine(" " + "     " + " ");
+                            Console.WriteLine(" " + string.Join(" ", data[i]) + " ");
+                            break;
+                    }
+                    
                 }
 
                 if (i == 1)
                 {
-                    
-                    Console.WriteLine(">" + string.Join(" ", data[i]) + "<");
+                    Console.WriteLine("-" + string.Join(" ", data[i]) + "-");                    
                 }
 
                 if (i == 2)
                 {
-                    Console.WriteLine(" " + string.Join(" ", data[i]) + " ");
-                    //Console.WriteLine(" " + "^ ^ ^" + " ");
+                    
+                    switch (bid)
+                    {
+                        case GameModes.Vertical:
+                            Console.WriteLine("-" + string.Join(" ", data[i]) + "-");
+                            Console.WriteLine(" " + "| | |" + " ");
+                            break;
+                        case GameModes.Diagonal:
+                            Console.WriteLine("-" + string.Join(" ", data[i]) + "-");
+                            Console.WriteLine("/" + "| | |" + "\\");
+                            break;
+                        case GameModes.Horizontal:
+                            Console.WriteLine("-" + string.Join(" ", data[i]) + "-");
+                            Console.WriteLine(" " + "     " + " ");
+                            break;
+                        default:
+                            Console.WriteLine(" " + string.Join(" ", data[i]) + " ");
+                            Console.WriteLine(" " + "     " + " ");
+                            break;
+                    }
                 }
 
             }
@@ -257,41 +326,45 @@ namespace Slot_Machine
         }
 
         /// <summary>
-        /// Calculate prize at one line
+        /// Receiving block of counters and calculating prize coints
         /// </summary>
         /// <param name="arrayCounters"> aray contain match counters where each index represent mutching number</param>
         /// <returns>int represent prize at one row</returns>
-        static int CalculatePrizeAtOneArray(int[,] arrayCounters)
+        static int CalculateArrayWinCoints(int[,] arrayCounters)
         {
             int prize = 0;
-            
-            for (int i = 0; i < 3; i++)
-            {
-                if (i==0 && i==1)
-                {
-                    if (arrayCounters[0,i] == 3)
-                        prize = 1;
-                }
-                else
-                {
-                    if (arrayCounters[0,i] == 2)
-                        prize = 2;
 
-                    if (arrayCounters[0,i] == 3)
-                        prize = 3;   
+            for (int j = 0; j < arrayCounters.Length/3 ; j++)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    if (i!= 2)
+                    {
+                        if (arrayCounters[j, i] == 3)
+                            prize = 1;
+                    }
+                    else
+                    {
+                        if (arrayCounters[j, i] == 2)
+                            prize = 2;
+
+                        if (arrayCounters[j, i] == 3)
+                            prize = 3;
+                    }
                 }
             }
+            
 
             return prize;
         }
 
         /// <summary>
-        /// Calu
+        /// Calculating prize by selected game mode
         /// </summary>
-        /// <param name="data"></param>
-        /// <param name="bid"></param>
+        /// <param name="data">generated slot numbers</param>
+        /// <param name="playMode">plying mode</param>
         /// <returns></returns>
-        static int CalculatePrize(List<List<int>> data, GameModes playMode)  //TODO: make this parameter an enum? =)
+        static int CalculatePrize(List<List<int>> data, GameModes playMode)
         {
             int prize = 0;
             int[,] temp;
@@ -300,63 +373,34 @@ namespace Slot_Machine
             {
                 case GameModes.CenterLine:
                     temp = CenterHorizontalMatches(data);
-
-                    prize = CalculatePrizeAtOneArray(temp);
+                    prize = CalculateArrayWinCoints(temp);
 
                     break;
 
                 case GameModes.Horizontal:
                     temp = HorizontalMatches(data);
+                    prize = CalculateArrayWinCoints(temp);
 
-                    for (int i = 0; i < 3; i++)
-                    {
-                       prize += CalculatePrizeAtOneArray(temp);
-                    }
                     break;
 
                 case GameModes.Vertical:
                     temp = HorizontalMatches(data);
-
-                    for (int i = 0; i < 3; i++)
-                    {
-                        prize += CalculatePrizeAtOneArray(temp);
-                    }
-
+                    prize = CalculateArrayWinCoints(temp);                    
                     temp = VerticalMatches(data);
-
-                    for (int i = 0; i < 3; i++)
-                    {
-                        prize += CalculatePrizeAtOneArray(temp);
-                    }
-
+                    prize += CalculateArrayWinCoints(temp);                    
+                    
                     break;
 
                 case GameModes.Diagonal:
                     temp = HorizontalMatches(data);
-
-                    for (int i = 0; i < 3; i++)
-                    {
-                        prize += CalculatePrizeAtOneArray(temp);
-                    }
-
+                    prize = CalculateArrayWinCoints(temp);                   
                     temp = VerticalMatches(data);
-
-                    for (int i = 0; i < 3; i++)
-                    {
-                        prize += CalculatePrizeAtOneArray(temp);
-                    }
-
+                    prize += CalculateArrayWinCoints(temp);                    
                     temp = DiagonalMatches(data);
-
-                    for (int i = 0; i < 2; i++)
-                    {
-                        prize += CalculatePrizeAtOneArray(temp);
-                    }
+                    prize += CalculateArrayWinCoints(temp);                    
                     
                     break;
-
             }
-
             return prize;
         }
 
