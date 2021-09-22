@@ -13,26 +13,26 @@ namespace Slot_Machine
         /// <param name="currentCoints">coints avaliable for player</param>
         public static void PrintAvaliableGameModes(int currentCoints)
         {
-            Console.WriteLine("\nMake your bid:");
+            Console.WriteLine("\nSelect Your Game Mode:");
 
             if (currentCoints >= 1)
             {
-                Console.WriteLine("1 coint for center line");
+                Console.WriteLine($"1 for center line cost {GetGameModeBid(GameModes.CenterLine)} coints");
             }
 
             if (currentCoints >= 3)
             {
-                Console.WriteLine("3 coints for all horizontal lines");
+                Console.WriteLine($"3 for previous mode and all horizontal lines cost {GetGameModeBid(GameModes.Horizontal)} coints");
             }
 
             if (currentCoints >= 6)
             {
-                Console.WriteLine("4 coint for center line");
+                Console.WriteLine($"6 for previous mode and all vertical lines cost {GetGameModeBid(GameModes.Vertical)} coints");
             }
 
             if (currentCoints >= 8)
             {
-                Console.WriteLine("8 coint for center line");
+                Console.WriteLine($"8 for previous mode and all diagonal lines cost {GetGameModeBid(GameModes.Diagonal)} coints");
             }
         }
 
