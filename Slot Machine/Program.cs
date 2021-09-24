@@ -11,16 +11,17 @@ namespace Slot_Machine
             int coints = 50;
             GameModes playmode;
             int win;
+            int counter = 0;
 
-            PrintStartGame(coints);
-            var start = Console.ReadKey();
+            
+            var start = PrintStartGame(coints);
 
             while (start.Key == ConsoleKey.Y)
             {                
                 PrintAvaliableGameModes(coints);
                 do
                 {
-                    playmode = GetGameMode(Console.ReadKey());
+                    playmode = GetGameMode();
 
                     if (playmode == GameModes.Invalid)
                     {
@@ -31,12 +32,18 @@ namespace Slot_Machine
                 
                 int bid = GetGameModeBid(playmode);
                 
-                while ((coints-bid)<=0)
+                while ((coints-bid)<=0 && counter < 3)
                 {
                     PrintNotEnoughtCoint();
-                    playmode = GetGameMode(Console.ReadKey());
+                    playmode = GetGameMode();
                     bid = GetGameModeBid(playmode);
+                    counter++;
+                }
 
+                if (counter >= 3)
+                {
+                    PrintLoseMessage();
+                    break;
                 }
 
                 coints += -bid;
@@ -54,10 +61,9 @@ namespace Slot_Machine
                 
                 
                 if (coints>0)
-                {
-                    PrintContinuePlay(coints);
+                {                    
                     Console.ReadKey();
-                    start = Console.ReadKey();
+                    start = PrintContinuePlay(coints);
                 }
                 else
                 {
