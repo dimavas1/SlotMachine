@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Slot_Machine;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Slot_Machine
-{
     public class UIBase
     {
 
@@ -518,5 +517,4 @@ namespace Slot_Machine
             return bid;
         }
 
-    }
 }
