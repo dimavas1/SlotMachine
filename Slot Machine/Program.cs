@@ -16,7 +16,7 @@ namespace Slot_Machine
 
             var start = UIBase.PrintStartGame(coints);
 
-            while (start.Key == ConsoleKey.Y)
+            while (UIBase.IsUserPressY(start))
             {
                 UIBase.PrintAvaliableGameModes(coints);
                 do
@@ -46,9 +46,9 @@ namespace Slot_Machine
                     break;
                 }
 
-                coints += -bid;
+                coints -= bid;
 
-                while (!Console.KeyAvailable)
+                while (!UIBase.IsUserPressAnyKey())
                 {
                     slotData = GenerateSlotNumbers();
                     UIBase.PrintSlotNumbers(slotData, playMode);
@@ -62,7 +62,7 @@ namespace Slot_Machine
 
                 if (coints > 0)
                 {
-                    Console.ReadKey();
+                    UIBase.EmptyKeyAvaliableBuffer();
                     start = UIBase.PrintContinuePlay(coints);
                 }
                 else

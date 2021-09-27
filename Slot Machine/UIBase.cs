@@ -111,6 +111,7 @@ public class UIBase
     /// Printing message on the game start 
     /// </summary>
     /// <param name="coints">Coints received at start</param>
+   /// <returns>input key from user Yes or No</returns>
     public static ConsoleKeyInfo PrintStartGame(int coints)
     {
         Console.WriteLine("Welcome to Slot Game");
@@ -132,6 +133,7 @@ public class UIBase
     /// Printing message about continue playing
     /// </summary>
     /// <param name="coints"> coint left to bid</param>
+    /// <returns>An input Key from User</returns>
     public static ConsoleKeyInfo PrintContinuePlay(int coints)
     {
         Console.WriteLine($"You have {coints} coints left");
@@ -142,7 +144,7 @@ public class UIBase
     /// <summary>
     /// Printig how many coint player win
     /// </summary>
-    /// <param name="win"></param>
+    /// <param name="win">winning sum</param>
     public static void PrintWinMessage(int win)
     {
         Console.WriteLine($"You Win {win}$");
@@ -166,6 +168,31 @@ public class UIBase
 
     }
 
-   
+    /// <summary>
+    /// Compare ConsoleKeyIfo input to ConsoleKey.Y
+    /// </summary>
+    /// <param name="key">Selected input</param>
+    /// <returns>True if it's a ConsoleKey.Y else False</returns>
+    public static bool IsUserPressY(ConsoleKeyInfo key)
+    {
+        return key.Key == ConsoleKey.Y;
+    }
+
+    /// <summary>
+    /// Return bolean if any key was pressed 
+    /// </summary>
+    /// <returns>True if pressed</returns>
+    public static bool IsUserPressAnyKey()
+    {
+        return Console.KeyAvailable;
+    }
+
+    /// <summary>
+    /// Empty KeyAvaliable Buffer after Console.KeyAvailable command
+    /// </summary>
+    public static void EmptyKeyAvaliableBuffer()
+    {
+        Console.ReadKey();
+    }
 
 }
