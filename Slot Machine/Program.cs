@@ -7,13 +7,13 @@ namespace Slot_Machine
     {
         static void Main(string[] args)
         {
-            List<List<int>> slotData = null;            
+            List<List<int>> slotData = null;
             int coints = 50;
-            GameModes playmode;
+            GameModes playMode;
             int win;
             int counter = 0;
 
-            
+
             var start = UIBase.PrintStartGame(coints);
 
             while (start.Key == ConsoleKey.Y)
@@ -21,22 +21,22 @@ namespace Slot_Machine
                 UIBase.PrintAvaliableGameModes(coints);
                 do
                 {
-                    playmode = UIBase.GetGameMode();
+                    playMode = UIBase.GetGameMode();
 
-                    if (playmode == GameModes.Invalid)
+                    if (playMode == GameModes.Invalid)
                     {
                         UIBase.PrintPressValidKey();
                     }
 
-                } while (playmode == GameModes.Invalid);
-                
-                int bid = UIBase.GetGameModeBid(playmode);
-                
-                while ((coints-bid)<=0 && counter < 3)
+                } while (playMode == GameModes.Invalid);
+
+                int bid = UIBase.GetGameModeBid(playMode);
+
+                while ((coints - bid) <= 0 && counter < 3)
                 {
                     UIBase.PrintNotEnoughtCoint();
-                    playmode = UIBase.GetGameMode();
-                    bid = UIBase.GetGameModeBid(playmode);
+                    playMode = UIBase.GetGameMode();
+                    bid = UIBase.GetGameModeBid(playMode);
                     counter++;
                 }
 
@@ -51,17 +51,17 @@ namespace Slot_Machine
                 while (!Console.KeyAvailable)
                 {
                     slotData = UIBase.GenerateSlotNumbers();
-                    UIBase.PrintSlotNumbers(slotData, playmode);
+                    UIBase.PrintSlotNumbers(slotData, playMode);
                 }
 
-                win = UIBase.CalculatePrize(slotData, playmode);
+                win = UIBase.CalculatePrize(slotData, playMode);
                 coints += win;
 
                 UIBase.PrintWinMessage(win);
-                
-                
-                if (coints>0)
-                {                    
+
+
+                if (coints > 0)
+                {
                     Console.ReadKey();
                     start = UIBase.PrintContinuePlay(coints);
                 }
@@ -70,9 +70,9 @@ namespace Slot_Machine
                     UIBase.PrintLoseMessage();
                     break;
                 }
-               
-            } 
-                        
+
+            }
+
         }
     }
 }
