@@ -108,16 +108,16 @@ public class UIBase
     }
 
     /// <summary>
-    /// Printing message on the game start 
+    /// Printing message at the game start and getting an input from user
     /// </summary>
     /// <param name="coints">Coints received at start</param>
-   /// <returns>input key from user Yes or No</returns>
-    public static ConsoleKeyInfo PrintStartGame(int coints)
+   /// <returns>True if User cliked Y, False any other key</returns>
+    public static bool PrintStartGame(int coints)
     {
         Console.WriteLine("Welcome to Slot Game");
         Console.WriteLine($"You have {coints} do you want to start play? [Y/N]\n");
 
-        return Console.ReadKey();
+        return IsUserPressY(Console.ReadKey());
     }
 
     /// <summary>
@@ -130,15 +130,15 @@ public class UIBase
     }
 
     /// <summary>
-    /// Printing message about continue playing
+    /// Printing message about continue playing and getting an input from user
     /// </summary>
     /// <param name="coints"> coint left to bid</param>
     /// <returns>An input Key from User</returns>
-    public static ConsoleKeyInfo PrintContinuePlay(int coints)
+    public static bool PrintContinuePlay(int coints)
     {
         Console.WriteLine($"You have {coints} coints left");
         Console.WriteLine($"Do you want continue play? [Y/N]");
-        return Console.ReadKey();
+        return IsUserPressY(Console.ReadKey());
     }
 
     /// <summary>
@@ -194,5 +194,7 @@ public class UIBase
     {
         Console.ReadKey();
     }
+
+   
 
 }

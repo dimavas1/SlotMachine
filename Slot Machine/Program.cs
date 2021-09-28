@@ -16,7 +16,7 @@ namespace Slot_Machine
 
             var start = UIBase.PrintStartGame(coints);
 
-            while (UIBase.IsUserPressY(start))
+            while (start)
             {
                 UIBase.PrintAvaliableGameModes(coints);
                 do
